@@ -10,6 +10,7 @@ REQUIREMENTS=requirements.txt
 .PHONY: run test
 
 run:
+	${PYTHON} proj1.py
 
 test:
 	cd src & ${PYTEST}
