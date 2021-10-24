@@ -10,7 +10,6 @@ __date__ = "23-10-2021"
 from typing import *
 from src.downloader import Downloader
 from cassandra.cluster import Cluster
-from traceback import print_stack
 
 
 class Proj1:
@@ -32,11 +31,10 @@ class Proj1:
         print("* Connecting to cassandra db server on {}:{}".format(ip, port))
         
         self.keyspace = keyspace
-        self.downloader = Downloader()
+        self.__downloader = Downloader()
         
-        self.cluster = Cluster([ip], port=port)
-        self.session = self.cluster.connect()
-        self.create_db_structure()
+        self.__cluster = Cluster([ip], port=port)
+        self.__session = self.__cluster.connect()
 
 
     def create_db_structure(self):
@@ -45,8 +43,114 @@ class Proj1:
         described in docs
         """
 
+        print("* Creating keyspace {}".format(self.keyspace))
+        self.__session.execute("""
+            CREATE KEYSPACE IF NOT EXISTS covid 
+            WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 3 };
+        """)
 
-    def load_data_into_db(self, data_sources: List[(str, str)]):
+        self.__session.execute("""
+            USE covid;
+        """)
+
+        print("* Creating tables")
+        self.__session.execute("""
+            CREATE TABLE IF NOT EXISTS infected (
+                date timestamp,
+                age int,
+                gender text,
+                region_code text,
+                district_code text,
+                infected_in_foreign boolean,
+                foreign_infection_country text,
+
+                PRIMARY KEY (
+                    date
+                )
+            );
+        """)
+
+        self.__session.execute("""
+            CREATE TABLE IF NOT EXISTS cured (
+                date timestamp,
+                age int,
+                gender text,
+                region_code text,
+                district_code text,
+
+                PRIMARY KEY (
+                    date
+                )
+            );
+        """)
+
+        self.__session.execute("""
+            CREATE TABLE IF NOT EXISTS died (
+                date timestamp,
+                age int,
+                gender text,
+                region_code text,
+                district_code text,
+
+                PRIMARY KEY (
+                    date
+                )
+            );
+        """)
+
+        self.__session.execute("""
+            CREATE TABLE IF NOT EXISTS hospitalized (
+                date timestamp,
+                num_of_first_record int,
+                cumulative_first_record int,
+                hospitalized_num int,
+                no_symptom int,
+                light_symptom int,
+                medium_symptom int,
+                hard_symptom int,
+                intensive_cure_num int,
+                oxygen_support int,
+
+                PRIMARY KEY (
+                    date
+                )
+            );
+        """)
+
+        self.__session.execute("""
+            CREATE TABLE IF NOT EXISTS tested (
+                date timestamp,
+                region_code text,
+                district_code text,
+                daily_tested_district int,
+                cumulative_tested_district int,
+                daily_tested_region int,
+                cumulative_tested_region int,
+
+                PRIMARY KEY (
+                    date
+                )
+            );
+        """)
+
+        self.__session.execute("""
+            CREATE TABLE IF NOT EXISTS vaccinated (
+                date timestamp,
+                vaccine_name text,
+                region_code text,
+                age_group text,
+                first_vaccine_num int,
+                second_vaccine_num int,
+                total_vaccine_num int,
+
+                PRIMARY KEY (
+                    date
+                )
+            );
+        """)
+
+
+    def load_data_into_db(self, data_sources: List[Tuple[str, str]]):
         """
         Method adds data into pre-created tables
 
@@ -55,7 +159,7 @@ class Proj1:
                 the first elem is url of dataset and second is
                 name of table into which data will be saved
         """
-
+        #TODO
     
     def destroy_data(self):
         """
@@ -64,15 +168,25 @@ class Proj1:
         
         confirm = str(input("* Are you sure you want to remove ALL data [Y/N]:"))
         if confirm.lower() == "y":
-            self.session.execute("DROP KEYSPACE IF EXISTS {}".format(self.keyspace))
+            self.__session.execute("""
+                DROP KEYSPACE IF EXISTS {}
+                """.format(self.keyspace)
+            )
             print("* Keyspace {} removed".format(self.keyspace))
         else:
             print("* Data not affected")
 
 
 if __name__ == "__main__":
-    #TODO
-    data_sources = []
+    data_sources = [
+        ("https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/osoby.csv", "infected"),
+        ("https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/vyleceni.csv", "cured"),
+        ("https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/umrti.csv", "died"),
+        ("https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/hospitalizace.csv", "hospitalized"),
+        ("https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/kraj-okres-testy.csv", "tested"),
+        ("https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/ockovani.csv", "vaccinated"),
+    ]
 
     db = Proj1()
-    db.load_data_into_db(data_sources)
+    db.create_db_structure()
+    db.destroy_data()
