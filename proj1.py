@@ -173,18 +173,45 @@ class Proj1:
             );
         """)
 
+    def parse_infected(self, dataset):
+        pass #TODO
+
+    def parse_cured(self, dataset):
+        pass #TODO
+
+    def parse_died_covid(self, dataset):
+        pass #TODO
+
+    def parse_hospitalized(self, dataset):
+        pass #TODO
+
+    def parse_tested(self, dataset):
+        pass #TODO
+
+    def parse_vaccinated(self, dataset):
+        pass #TODO
+
+    def parse_died(self, dataset):
+        pass #TODO
+
+
 
     def load_data_into_db(self, data_sources: List[Tuple[str, str]]):
         """
-        Method adds data into pre-created tables
+        Method calls special methods, that adds data into pre-created tables, for each dataset
 
         Parameters:
             data_sources (List[str]): list of tuples, where
                 the first elem is url of dataset and second is
                 name of table into which data will be saved
         """
-        #TODO
-    
+
+        dl = Downloader()
+        for link in data_sources:
+            dataset = dl.get_data(link[0], 'csv')
+            eval('self.parse_' + link[1] + '(dataset)')
+
+
     def destroy_data(self):
         """
         Method drops whole keyspace
