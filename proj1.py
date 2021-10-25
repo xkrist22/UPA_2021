@@ -66,7 +66,8 @@ class Proj1:
 
                 PRIMARY KEY (
                     region_code,
-                    district_code
+                    gender,
+                    age
                 )
             );
         """)
@@ -81,7 +82,8 @@ class Proj1:
 
                 PRIMARY KEY (
                     region_code,
-                    district_code
+                    gender,
+                    age
                 )
             );
         """)
@@ -96,7 +98,8 @@ class Proj1:
 
                 PRIMARY KEY (
                     region_code,
-                    district_code
+                    gender,
+                    age
                 )
             );
         """)
@@ -131,8 +134,7 @@ class Proj1:
                 cumulative_tested_region int,
 
                 PRIMARY KEY (
-                    region_code,
-                    district_code
+                    region_code
                 )
             );
         """)
