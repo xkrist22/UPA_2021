@@ -56,7 +56,7 @@ class Proj1:
         print("* Creating tables")
         self.__session.execute("""
             CREATE TABLE IF NOT EXISTS infected (
-                date timestamp,
+                date date,
                 age int,
                 gender text,
                 region_code text,
@@ -65,42 +65,45 @@ class Proj1:
                 foreign_infection_country text,
 
                 PRIMARY KEY (
-                    date
+                    region_code,
+                    district_code
                 )
             );
         """)
 
         self.__session.execute("""
             CREATE TABLE IF NOT EXISTS cured (
-                date timestamp,
+                date date,
                 age int,
                 gender text,
                 region_code text,
                 district_code text,
 
                 PRIMARY KEY (
-                    date
+                    region_code,
+                    district_code
                 )
             );
         """)
 
         self.__session.execute("""
-            CREATE TABLE IF NOT EXISTS died (
-                date timestamp,
+            CREATE TABLE IF NOT EXISTS died_covid (
+                date date,
                 age int,
                 gender text,
                 region_code text,
                 district_code text,
 
                 PRIMARY KEY (
-                    date
+                    region_code,
+                    district_code
                 )
             );
         """)
 
         self.__session.execute("""
             CREATE TABLE IF NOT EXISTS hospitalized (
-                date timestamp,
+                date date,
                 num_of_first_record int,
                 cumulative_first_record int,
                 hospitalized_num int,
@@ -119,7 +122,7 @@ class Proj1:
 
         self.__session.execute("""
             CREATE TABLE IF NOT EXISTS tested (
-                date timestamp,
+                date date,
                 region_code text,
                 district_code text,
                 daily_tested_district int,
@@ -128,14 +131,15 @@ class Proj1:
                 cumulative_tested_region int,
 
                 PRIMARY KEY (
-                    date
+                    region_code,
+                    district_code
                 )
             );
         """)
 
         self.__session.execute("""
             CREATE TABLE IF NOT EXISTS vaccinated (
-                date timestamp,
+                date date,
                 vaccine_name text,
                 region_code text,
                 age_group text,
@@ -144,7 +148,25 @@ class Proj1:
                 total_vaccine_num int,
 
                 PRIMARY KEY (
-                    date
+                    region_code,
+                    age_group
+                )
+            );
+        """)
+
+
+        self.__session.execute("""
+            CREATE TABLE IF NOT EXISTS died (
+                age_group text,
+                date_from date,
+                date_to date,
+                year int,
+                week int,
+                value int,
+                PRIMARY KEY (
+                    age_group,
+                    year,
+                    week
                 )
             );
         """)
@@ -181,12 +203,14 @@ if __name__ == "__main__":
     data_sources = [
         ("https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/osoby.csv", "infected"),
         ("https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/vyleceni.csv", "cured"),
-        ("https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/umrti.csv", "died"),
+        ("https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/umrti.csv", "died_covid"),
         ("https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/hospitalizace.csv", "hospitalized"),
         ("https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/kraj-okres-testy.csv", "tested"),
         ("https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/ockovani.csv", "vaccinated"),
+        ("https://www.czso.cz/documents/62353418/155512389/130185-21data101921.csv", "died"),
     ]
 
     db = Proj1()
     db.create_db_structure()
-    db.destroy_data()
+    db.load_data_into_db(data_sources)
+    # db.destroy_data()
