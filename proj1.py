@@ -297,23 +297,20 @@ class Proj1:
         """
         print("* Inserting into table 'infected'")
         for row in dataset[1:100]:  # first row is table header
-            try:
-                self.__session.execute(
-                    """
-                    INSERT INTO vaccinated (
-                        date,
-                        vaccine_name,
-                        region_code,
-                        age_group,
-                        first_vaccine_num,
-                        second_vaccine_num,
-                        total_vaccine_num
-                        )  VALUES (%s, %s, %s, %s, %s, %s, %s)
-                    """,
-                    (row[0], row[1], row[2], row[3], int(row[4]), int(row[5]), int(row[6]))
-                )
-            except:
-                continue
+            self.__session.execute(
+                """
+                INSERT INTO vaccinated (
+                    date,
+                    vaccine_name,
+                    region_code,
+                    age_group,
+                    first_vaccine_num,
+                    second_vaccine_num,
+                    total_vaccine_num
+                    )  VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """,
+                (row[0], row[1], row[2], row[4], int(row[5]), int(row[6]), int(row[7]))
+            )
 
     def parse_died(self, dataset):
         """
