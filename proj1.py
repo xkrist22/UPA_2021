@@ -60,7 +60,6 @@ class Proj1:
                 gender text,
                 region_code text,
                 district_code text,
-                infected_in_foreign boolean,
                 foreign_infection_country text,
 
                 PRIMARY KEY (
@@ -178,7 +177,18 @@ class Proj1:
         Parameters:
             dataset (Union[list, dict]): parsed dataset in form of (nested) dicts and/or lists
         """
-        # TODO
+        print("* Inserting into table 'infected'")
+        for row in dataset[1:100]:  # first row is table header
+            try:
+                self.__session.execute(
+                    """
+                    INSERT INTO infected (date, age, gender, region_code, district_code, foreign_infection_country)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                    """,
+                    (row[0], int(row[1]), row[2], row[3], row[4], row[6])
+                )
+            except:
+                continue
 
     def parse_cured(self, dataset):
         """
@@ -187,7 +197,18 @@ class Proj1:
         Parameters:
             dataset (Union[list, dict]): parsed dataset in form of (nested) dicts and/or lists
         """
-        # TODO
+        print("* Inserting into table 'cured'")
+        for row in dataset[1:100]:  # first row is table header
+            try:
+                self.__session.execute(
+                    """
+                    INSERT INTO cured (date, age, gender, region_code, district_code)
+                    VALUES (%s, %s, %s, %s, %s)
+                    """,
+                    (row[0], int(row[1]), row[2], row[3], row[4])
+                )
+            except:
+                continue
 
     def parse_died_covid(self, dataset):
         """
@@ -196,7 +217,18 @@ class Proj1:
         Parameters:
             dataset (Union[list, dict]): parsed dataset in form of (nested) dicts and/or lists
         """
-        # TODO
+        print("* Inserting into table 'infected'")
+        for row in dataset[1:100]:  # first row is table header
+            try:
+                self.__session.execute(
+                    """
+                    INSERT INTO died_covid (date, age, gender, region_code, district_code)
+                    VALUES (%s, %s, %s, %s, %s)
+                    """,
+                    (row[0], int(row[1]), row[2], row[3], row[4])
+                )
+            except:
+                continue
 
     def parse_hospitalized(self, dataset):
         """
@@ -205,7 +237,29 @@ class Proj1:
         Parameters:
             dataset (Union[list, dict]): parsed dataset in form of (nested) dicts and/or lists
         """
-        # TODO
+        print("* Inserting into table 'infected'")
+        for row in dataset[1:100]:  # first row is table header
+            try:
+                self.__session.execute(
+                    """
+                    INSERT INTO hospitalized (
+                    date,
+                    num_of_first_record,
+                    cumulative_first_record,
+                    hospitalized_num,
+                    no_symptom,
+                    light_symptom,
+                    medium_symptom,
+                    hard_symptom,
+                    intensive_cure_num,
+                    oxygen_support
+                        )  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    """,
+                    (row[0], int(row[1]), int(row[2]), int(row[3]), int(row[4]), int(row[5]), int(row[6]), int(row[7]),
+                     int(row[8]), int(row[9]), int(row[10]))
+                )
+            except:
+                continue
 
     def parse_tested(self, dataset):
         """
@@ -214,7 +268,25 @@ class Proj1:
         Parameters:
             dataset (Union[list, dict]): parsed dataset in form of (nested) dicts and/or lists
         """
-        # TODO
+        print("* Inserting into table 'infected'")
+        for row in dataset[1:100]:  # first row is table header
+            try:
+                self.__session.execute(
+                    """
+                    INSERT INTO tested (
+                    date,
+                    region_code,
+                    district_code,
+                    daily_tested_district,
+                    cumulative_tested_district,
+                    daily_tested_region,
+                    cumulative_tested_region
+                        )  VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    """,
+                    (row[0], int(row[1]), int(row[2]), int(row[3]), int(row[4]), int(row[5]), int(row[6]))
+                )
+            except:
+                continue
 
     def parse_vaccinated(self, dataset):
         """
@@ -223,7 +295,25 @@ class Proj1:
         Parameters:
             dataset (Union[list, dict]): parsed dataset in form of (nested) dicts and/or lists
         """
-        # TODO
+        print("* Inserting into table 'infected'")
+        for row in dataset[1:100]:  # first row is table header
+            try:
+                self.__session.execute(
+                    """
+                    INSERT INTO vaccinated (
+                        date,
+                        vaccine_name,
+                        region_code,
+                        age_group,
+                        first_vaccine_num,
+                        second_vaccine_num,
+                        total_vaccine_num
+                        )  VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    """,
+                    (row[0], row[1], row[2], row[3], int(row[4]), int(row[5]), int(row[6]))
+                )
+            except:
+                continue
 
     def parse_died(self, dataset):
         """
@@ -233,7 +323,7 @@ class Proj1:
             dataset (Union[list, dict]): parsed dataset in form of (nested) dicts and/or lists
         """
         print("* Inserting into table 'died'")
-        for row in dataset[1:]:  # first row is table header
+        for row in dataset[1:100]:  # first row is table header
             if row[12] != "celkem":
                 self.__session.execute(
                     """
@@ -255,7 +345,7 @@ class Proj1:
 
         dl = Downloader()
         for link in data_sources:
-            dataset = dl.get_data(link[0], 'csv')
+            dataset = dl.get_data(link[0], 'csv', link[1] + '_cache')
             eval('self.parse_' + link[1] + '(dataset)')
 
     def destroy_data(self):
@@ -276,12 +366,12 @@ class Proj1:
 
 if __name__ == "__main__":
     data_sources = [
-        # ("https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/osoby.csv", "infected"),
-        # ("https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/vyleceni.csv", "cured"),
-        # ("https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/umrti.csv", "died_covid"),
-        # ("https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/hospitalizace.csv", "hospitalized"),
-        # ("https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/kraj-okres-testy.csv", "tested"),
-        # ("https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/ockovani.csv", "vaccinated"),
+        ("https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/osoby.csv", "infected"),
+        ("https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/vyleceni.csv", "cured"),
+        ("https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/umrti.csv", "died_covid"),
+        ("https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/hospitalizace.csv", "hospitalized"),
+        ("https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/kraj-okres-testy.csv", "tested"),
+        ("https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/ockovani.csv", "vaccinated"),
         ("https://www.czso.cz/documents/62353418/155512389/130185-21data101921.csv", "died"),
     ]
 
