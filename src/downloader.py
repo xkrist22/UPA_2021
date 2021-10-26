@@ -17,7 +17,6 @@ from requests import get
 class Downloader:
     __SUPPORTED_TYPES = ["json", "csv"]
 
-
     @classmethod
     def get_supported_types(cls) -> List[str]:
         """
@@ -26,9 +25,8 @@ class Downloader:
         Returns:
             List[str]: list containing all supported types
         """
-        
-        return cls.__SUPPORTED_TYPES
 
+        return cls.__SUPPORTED_TYPES
 
     @classmethod
     def get_data(cls, src: str, type: str, filename: str = None) -> Union[list, dict]:
@@ -49,7 +47,7 @@ class Downloader:
         Returns:
             Union[list, dict]: parsed dataset in form of (nested) dicts and/or lists
         """
-        
+
         # check if given type is supported
         if type not in Downloader.__SUPPORTED_TYPES:
             raise AttributeError("Unsupported type {} of the dataset".format(type))
@@ -57,7 +55,7 @@ class Downloader:
         # if no filename is given, just download dataset and parse it
         if filename is None:
             data = cls.__download_dataset(src)
-        
+
         else:
             # try to open file and read data from it
             try:
@@ -69,10 +67,9 @@ class Downloader:
                 data = cls.__download_dataset(src)
                 file = open(filename, "w")
                 file.write(data)
-        
+
         # return dataset in form of List/Dict
         return cls.__parse_dataset(data, type)
-
 
     @classmethod
     def __download_dataset(cls, src: str) -> str:
@@ -85,7 +82,6 @@ class Downloader:
 
         r = get(src, allow_redirects=True)
         return r.text
-
 
     @classmethod
     def __parse_dataset(cls, data: str, type: str) -> Union[list, dict]:
@@ -101,13 +97,12 @@ class Downloader:
         Returns:
             Union[list, dict]: dataset in form of (nested) lists/dicts
         """
-        
+
         if type == "json":
             return read_json(data)
         elif type == "csv":
             # conversion must be used due to csv package 
             return list(cls.read_csv(data))
-
 
     @classmethod
     def read_csv(cls, data: str, delimiter: str = ",") -> List[List[str]]:
@@ -123,6 +118,6 @@ class Downloader:
             nested lists are columns, str are values
         """
 
-        rows = data.split()
-        data = [row.split(",") for row in rows]
+        rows = data.splitlines()
+        data = [row.replace('"', '').split(",") for row in rows]
         return data
