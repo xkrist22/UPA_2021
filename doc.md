@@ -22,14 +22,19 @@ Test skriptů je možné spustit pomocí příkazu `make test`. Vlastní skript 
 Pro stahování datasetů využívá projekt třídu Downloader implementovanou v souboru /src/downloader. Třídní metody umožňují z dané URL adresy stáhnout dataset a provést parsování uložených dat do datových typů "list" či "dict". Skript podporuje parsování datasetů uložených ve formátech json a csv. 
 
 ## Cassandra
-- asi obecně co to je
-- proč jsme ji vybrali
+Jako NoSQL databázi jsme se rozhodli využít Cassandru od Apache. Cassandra je distribuovaná, sloupcově orientovaná open-source databáze.
+
+Při výběru databáze jsme zohledňovali, že potřebujeme zpracovávat veliké množství dat, které cassandra ukládá v komprimované podobě. Nad těmito daty provádět analytické operace a slučování, na tyto operace jsou sloupcově orientované databáze vhodné. Také jsme zohledňovali, že do databáze nebudeme pravidelně přidávat data a nepotřebujeme využívat transakce, na které Cassandra ideální není. 
 
 ### tvorba tabulek
+
+Knihovna Cassandra poskytuje třídu `Cluster`, která si metodou `connect()` vyžádá připojení k nějak běžící databázi. Funkce vrátí objekt třídy `Session`, který repsezentuje připojení k vybrané fatabázi. Pomocí `Session` můžeme spouštět příkazy v syntaxi CQL pomocí `execute()`. Každou tabulku vytvoříme pomocí příkazu `CREATE TABLE` se specifikovanými sloupci, jejich typy a zvolenými primárními klíčemi. 
 
 ### předzpracování dat
 
 ### ukládání dat
+
+Použijeme stejnou metodu, jako při vytváření tabulek, `execute()`. Každý záznam vložíme do příslušně tabulky pomocí příkazu `INSERT INTO`, kterému poskytneme předzpracovaná data z předchozího části.
 
 ## členové týmu
 - Křištof Jiří (vedoucí)
