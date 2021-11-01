@@ -11,7 +11,7 @@ Před spuštěním skriptu `proj1.py` vytvářející tabulky pro data a ukláda
 Databázový server Cassandra je možné spustit dle pokynů popisovaných v rámci cvičení předmětu UPA, přičemž před spuštěním virtuálního stroje nastavíme port forwarding portu 9042 (pro hostitele i hosta). 
 Test skriptů je možné spustit pomocí příkazu `make test`. Vlastní skript poté pomocí příkazu `make run`. 
 
-## popis použitých tabulek
+## Popis použitých tabulek
 
 ### Nakažení
 Základní denní incidenční přehled osob s prokázanou nákazou COVID-19 dle hlášení krajských hygienických stanic.
@@ -107,15 +107,16 @@ Jako NoSQL databázi jsme se rozhodli využít Cassandru od Apache. Cassandra je
 
 Při výběru databáze jsme zohledňovali, že potřebujeme zpracovávat veliké množství dat, které cassandra ukládá v komprimované podobě. Nad těmito daty provádět analytické operace a slučování, na tyto operace jsou sloupcově orientované databáze vhodné. Také jsme zohledňovali, že do databáze nebudeme pravidelně přidávat data a nepotřebujeme využívat transakce, na které Cassandra ideální není. 
 
-### tvorba tabulek
-
+### Tvorba tabulek
 Knihovna Cassandra poskytuje třídu `Cluster`, která si metodou `connect()` vyžádá připojení k nějak běžící databázi. Funkce vrátí objekt třídy `Session`, který repsezentuje připojení k vybrané fatabázi. Pomocí `Session` můžeme spouštět příkazy v syntaxi CQL pomocí `execute()`. Každou tabulku vytvoříme pomocí příkazu `CREATE TABLE` se specifikovanými sloupci, jejich typy a zvolenými primárními klíčemi. 
 
-### předzpracování dat
+### Předzpracování dat
+V rámci předzpracování dat jsou odebrány ty položky, u nichž není vyplněna hodnota používaná v rámci primárního klíče. V případě, že položku nelze vložit do tabulky, pak je tato skutečnost poznamenána v logu uloženém v souboru`insert.log` a tato informace je uživateli vypsána do okna terminálu. 
 
-### ukládání dat
+### Ukládání dat
+Použijeme stejnou metodu, jako při vytváření tabulek, `execute()`. Každý záznam vložíme do příslušně tabulky pomocí příkazu `INSERT INTO`, kterému poskytneme předzpracovaná data z předchozího části. 
 
-Použijeme stejnou metodu, jako při vytváření tabulek, `execute()`. Každý záznam vložíme do příslušně tabulky pomocí příkazu `INSERT INTO`, kterému poskytneme předzpracovaná data z předchozího části.
+Vkládání dat je možné ukončit dříve pomocí přerušení z klávesnice. V tomto případě skript přechází na vkládání dat do další tabulky. Tuto vlastnost je vhodné využít pouze pro účely ladění programu. 
 
 ## členové týmu
 - Křištof Jiří (vedoucí)
