@@ -11,12 +11,93 @@ Před spuštěním skriptu `proj1.py` vytvářející tabulky pro data a ukláda
 Databázový server Cassandra je možné spustit dle pokynů popisovaných v rámci cvičení předmětu UPA, přičemž před spuštěním virtuálního stroje nastavíme port forwarding portu 9042 (pro hostitele i hosta). 
 Test skriptů je možné spustit pomocí příkazu `make test`. Vlastní skript poté pomocí příkazu `make run`. 
 
-## struktura tabulek
-- schéma
-- datové typy
-- volba ID
-- propojení s ostatními tabulkami (souvislosti)
-- ...
+## popis použitých tabulek
+
+### Nakažení
+Základní denní incidenční přehled osob s prokázanou nákazou COVID-19 dle hlášení krajských hygienických stanic.
+
+- datum : datum
+- vek : číslo
+- pohlavi : textový řetězec
+- kraj_nuts_kod : textový řetězec
+- okres_lau_kod : textový řetězec
+- nakaza_v_zahranici : boolean
+- nakaza_zeme_csu_kod : textový řetězec
+
+### Vyléčení
+Záznamy o vyléčených po onemocnění COVID‑19 dle hlášení krajských hygienických stanic.
+
+- datum : datum
+- vek : číslo
+- pohlavi : textový řetězec
+- kraj_nuts_kod : textový řetězec
+- okres_lau_kod : textový řetězec
+
+### Úmrtí na covid
+Záznamy o úmrtích v souvislosti s onemocněním COVID‑19 dle hlášení krajských hygienických stanic.
+
+- datum : datum
+- vek : číslo
+- pohlavi : textový řetězec
+- kraj_nuts_kod : textový řetězec
+- okres_lau_kod : textový řetězec
+
+### Hospitalizovaní
+Datová sada obsahující data hospitalizovaných pacientů popisující průběh hospitalizace.
+
+- datum : datum
+- pacient_prvni_zaznam : číslo
+- kum_pacient_prvni_zaznam : číslo
+- pocet_hosp : číslo
+- stav_bez_priznaku : číslo
+- stav_lehky : číslo
+- stav_stredni : číslo
+- stav_tezky : číslo
+- jip : číslo
+- kyslik : číslo
+- hfno : číslo
+- upv : číslo
+- ecmo : číslo
+- tezky_upv_ecmo : číslo
+- umrti : číslo
+- kum_umrti : číslo
+
+### Testy
+Datová sada obsahující přírůstkové a kumulativní denní počty provedených PCR testů s korekcí na opakovaně pozitivní (kontrolní) testy.
+
+- datum : datum
+- kraj_nuts_kod : textový řetězec
+- okres_lau_kod : textový řetězec
+- prirustkovy_pocet_testu_okres : číslo
+- kumulativni_pocet_testu_okres : číslo
+- prirustkovy_pocet_testu_kraj : číslo
+- kumulativni_pocet_testu_kraj : číslo
+- prirustkovy_pocet_prvnich_testu_okres : číslo
+- kumulativni_pocet_prvnich_testu_okres : číslo
+- prirustkovy_pocet_prvnich_testu_kraj : číslo
+- kumulativni_pocet_prvnich_testu_kraj : číslo
+
+### Očkování
+Datová sada poskytuje agregovaná data o vykázaných očkováních na úrovni krajů ČR.
+
+- datum : datum
+- vakcina : textový řetězec
+- kraj_nuts_kod : textový řetězec
+- kraj_nazev : textový řetězec
+- vekova_skupina : textový řetězec
+- prvnich_davek : číslo
+- druhych_davek : číslo
+- celkem_davek : číslo
+
+### Úmrtí
+Úmrtí obyvatelstva podle pětiletých věkových skupin a pohlaví v krajích a okresech.
+
+- vek_text : text
+- casref_od : datum
+- casref_do : datum
+- rok : int
+- tyden : int
+- hodnota : int
 
 ## Stahování datasetů
 Pro stahování datasetů využívá projekt třídu Downloader implementovanou v souboru /src/downloader. Třídní metody umožňují z dané URL adresy stáhnout dataset a provést parsování uložených dat do datových typů "list" či "dict". Skript podporuje parsování datasetů uložených ve formátech json a csv. 
