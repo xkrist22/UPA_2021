@@ -17,6 +17,7 @@ from requests import get
 class Downloader:
     __SUPPORTED_TYPES = ["json", "csv"]
 
+
     @classmethod
     def get_supported_types(cls) -> List[str]:
         """
@@ -27,6 +28,7 @@ class Downloader:
         """
 
         return cls.__SUPPORTED_TYPES
+
 
     @classmethod
     def get_data(cls, src: str, type: str, filename: str = None) -> Union[list, dict]:
@@ -59,17 +61,18 @@ class Downloader:
         else:
             # try to open file and read data from it
             try:
-                file = open(filename, "r")
+                file = open(filename, "r", encoding='utf8')
                 data = file.read()
 
             # if reading is unsuccesfull (non-existing file, ...)
             except Exception:
                 data = cls.__download_dataset(src)
-                file = open(filename, "w")
+                file = open(filename, "w", encoding='utf8')
                 file.write(data)
 
         # return dataset in form of List/Dict
         return cls.__parse_dataset(data, type)
+
 
     @classmethod
     def __download_dataset(cls, src: str) -> str:
@@ -82,6 +85,7 @@ class Downloader:
 
         r = get(src, allow_redirects=True)
         return r.text
+
 
     @classmethod
     def __parse_dataset(cls, data: str, type: str) -> Union[list, dict]:
@@ -104,6 +108,7 @@ class Downloader:
             # conversion must be used due to csv package 
             return list(cls.read_csv(data))
 
+
     @classmethod
     def read_csv(cls, data: str, delimiter: str = ",") -> List[List[str]]:
         """
@@ -120,4 +125,5 @@ class Downloader:
 
         rows = data.splitlines()
         data = [row.replace('"', '').split(",") for row in rows]
+        data = [row for row in data if row != ['']]
         return data

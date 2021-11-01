@@ -10,6 +10,8 @@ __date__ = "23-10-2021"
 from typing import *
 from src.downloader import Downloader
 from cassandra.cluster import Cluster
+import logging
+from tqdm import tqdm
 
 
 class Proj1:
@@ -35,6 +37,7 @@ class Proj1:
 
         self.__cluster = Cluster([ip], port=port)
         self.__session = self.__cluster.connect()
+
 
     def create_db_structure(self):
         """
@@ -170,6 +173,7 @@ class Proj1:
             );
         """)
 
+
     def parse_infected(self, dataset):
         """
         Method adds data into pre-created table 'infected'
@@ -177,8 +181,11 @@ class Proj1:
         Parameters:
             dataset (Union[list, dict]): parsed dataset in form of (nested) dicts and/or lists
         """
-        print("* Inserting into table 'infected'")
-        for row in dataset[1:100]:  # first row is table header
+
+        # remove rows where primary key element is not filled
+        dataset = [row for row in dataset if row[1] != '' and row[2] != '' and row[3] != '']
+        
+        for row in tqdm(dataset[1:1000]):  # first row is table header
             try:
                 self.__session.execute(
                     """
@@ -187,8 +194,11 @@ class Proj1:
                     """,
                     (row[0], int(row[1]), row[2], row[3], row[4], row[6])
                 )
-            except:
+            except Exception:
+                print("* Row {} cannot be added into table \"infected\", see file \"insert.log\" for more information".format(row))
+                logging.exception("Exception raised while adding into table \"infected\"\n\trow: {}".format(row))
                 continue
+
 
     def parse_cured(self, dataset):
         """
@@ -197,8 +207,11 @@ class Proj1:
         Parameters:
             dataset (Union[list, dict]): parsed dataset in form of (nested) dicts and/or lists
         """
-        print("* Inserting into table 'cured'")
-        for row in dataset[1:100]:  # first row is table header
+
+        # remove rows where primary key element is not filled
+        dataset = [row for row in dataset if row[1] != '' and row[2] != '' and row[3] != '']
+
+        for row in tqdm(dataset[1:1000]):  # first row is table header
             try:
                 self.__session.execute(
                     """
@@ -207,8 +220,11 @@ class Proj1:
                     """,
                     (row[0], int(row[1]), row[2], row[3], row[4])
                 )
-            except:
+            except Exception:
+                print("* Row {} cannot be added into table \"cured\", see file \"insert.log\" for more information".format(row))
+                logging.exception("Exception raised while adding into table \"cured\"\n\trow: {}".format(row))
                 continue
+
 
     def parse_died_covid(self, dataset):
         """
@@ -217,8 +233,11 @@ class Proj1:
         Parameters:
             dataset (Union[list, dict]): parsed dataset in form of (nested) dicts and/or lists
         """
-        print("* Inserting into table 'infected'")
-        for row in dataset[1:100]:  # first row is table header
+
+        # remove rows where primary key element is not filled
+        dataset = [row for row in dataset if row[1] != '' and row[2] != '' and row[3] != '']
+
+        for row in tqdm(dataset[1:1000]):  # first row is table header
             try:
                 self.__session.execute(
                     """
@@ -227,8 +246,11 @@ class Proj1:
                     """,
                     (row[0], int(row[1]), row[2], row[3], row[4])
                 )
-            except:
+            except Exception:
+                print("* Row {} cannot be added into table \"died_covid\", see file \"insert.log\" for more information".format(row))
+                logging.exception("Exception raised while adding into table \"died_covid\"\n\trow: {}".format(row))
                 continue
+
 
     def parse_hospitalized(self, dataset):
         """
@@ -237,8 +259,11 @@ class Proj1:
         Parameters:
             dataset (Union[list, dict]): parsed dataset in form of (nested) dicts and/or lists
         """
-        print("* Inserting into table 'infected'")
-        for row in dataset[1:100]:  # first row is table header
+
+        # remove rows where primary key element is not filled
+        dataset = [row for row in dataset if row[0] != '']
+
+        for row in tqdm(dataset[1:1000]):  # first row is table header
             try:
                 self.__session.execute(
                     """
@@ -256,10 +281,13 @@ class Proj1:
                         )  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     """,
                     (row[0], int(row[1]), int(row[2]), int(row[3]), int(row[4]), int(row[5]), int(row[6]), int(row[7]),
-                     int(row[8]), int(row[9]), int(row[10]))
+                     int(row[8]), int(row[9]))
                 )
-            except:
+            except Exception:
+                print("* Row {} cannot be added into table \"hospitalized\", see file \"insert.log\" for more information".format(row))
+                logging.exception("Exception raised while adding into table \"hospitalized\"\n\trow: {}".format(row))
                 continue
+
 
     def parse_tested(self, dataset):
         """
@@ -268,8 +296,11 @@ class Proj1:
         Parameters:
             dataset (Union[list, dict]): parsed dataset in form of (nested) dicts and/or lists
         """
-        print("* Inserting into table 'infected'")
-        for row in dataset[1:100]:  # first row is table header
+
+        # remove rows where primary key element is not filled
+        dataset = [row for row in dataset if row[1] != '']
+
+        for row in tqdm(dataset[1:1000]):  # first row is table header
             try:
                 self.__session.execute(
                     """
@@ -283,10 +314,13 @@ class Proj1:
                     cumulative_tested_region
                         )  VALUES (%s, %s, %s, %s, %s, %s, %s)
                     """,
-                    (row[0], int(row[1]), int(row[2]), int(row[3]), int(row[4]), int(row[5]), int(row[6]))
+                    (row[0], row[1], row[2], int(row[3]), int(row[4]), int(row[5]), int(row[6]))
                 )
-            except:
+            except Exception:
+                print("* Row {} cannot be added into table \"tested\", see file \"insert.log\" for more information".format(row))
+                logging.exception("Exception raised while adding into table \"tested\"\n\trow: {}".format(row))
                 continue
+
 
     def parse_vaccinated(self, dataset):
         """
@@ -295,22 +329,31 @@ class Proj1:
         Parameters:
             dataset (Union[list, dict]): parsed dataset in form of (nested) dicts and/or lists
         """
-        print("* Inserting into table 'infected'")
-        for row in dataset[1:100]:  # first row is table header
-            self.__session.execute(
-                """
-                INSERT INTO vaccinated (
-                    date,
-                    vaccine_name,
-                    region_code,
-                    age_group,
-                    first_vaccine_num,
-                    second_vaccine_num,
-                    total_vaccine_num
-                    )  VALUES (%s, %s, %s, %s, %s, %s, %s)
-                """,
-                (row[0], row[1], row[2], row[4], int(row[5]), int(row[6]), int(row[7]))
-            )
+
+        # remove rows where primary key element is not filled
+        dataset = [row for row in dataset if row[2] != '' and row[4] != '']
+
+        for row in tqdm(dataset[1:1000]):  # first row is table header
+            try:
+                self.__session.execute(
+                    """
+                    INSERT INTO vaccinated (
+                        date,
+                        vaccine_name,
+                        region_code,
+                        age_group,
+                        first_vaccine_num,
+                        second_vaccine_num,
+                        total_vaccine_num
+                        )  VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    """,
+                    (row[0], row[1], row[2], row[4], int(row[5]), int(row[6]), int(row[7]))
+                )
+            except Exception:
+                print("* Row {} cannot be added into table \"vaccinated\", see file \"insert.log\" for more information".format(row))
+                logging.exception("Exception raised while adding into table \"vaccinated\"\n\trow: {}".format(row))
+                continue
+
 
     def parse_died(self, dataset):
         """
@@ -319,16 +362,26 @@ class Proj1:
         Parameters:
             dataset (Union[list, dict]): parsed dataset in form of (nested) dicts and/or lists
         """
+
+        # remove rows where primary key element is not filled
+        dataset = [row for row in dataset if row[12] != '' and row[7] != '' and row[8] != '']
+
         print("* Inserting into table 'died'")
-        for row in dataset[1:100]:  # first row is table header
-            if row[12] != "celkem":
-                self.__session.execute(
-                    """
-                    INSERT INTO died (age_group, date_from, date_to, year, week, value)
-                    VALUES (%s, %s, %s, %s, %s, %s)
-                    """,
-                    (row[12], row[10], row[11], int(row[7]), int(row[8]), int(row[1]))
-                )
+        for row in tqdm(dataset[1:1000]):  # first row is table header
+            try:
+                if row[12] != "celkem":
+                    self.__session.execute(
+                        """
+                        INSERT INTO died (age_group, date_from, date_to, year, week, value)
+                        VALUES (%s, %s, %s, %s, %s, %s)
+                        """,
+                        (row[12], row[10], row[11], int(row[7]), int(row[8]), int(row[1]))
+                    )
+            except Exception:
+                print("* Row {} cannot be added into table \"died\", see file \"insert.log\" for more information".format(row))
+                logging.exception("Exception raised while adding into table \"died\"\n\trow: {}".format(row))
+                continue
+
 
     def load_data_into_db(self, data_sources: List[Tuple[str, str]]):
         """
@@ -342,8 +395,12 @@ class Proj1:
 
         dl = Downloader()
         for link in data_sources:
-            dataset = dl.get_data(link[0], 'csv', link[1] + '_cache')
+            # get dataset from given url link[0]
+            dataset = dl.get_data(link[0], 'csv', link[1] + '_cache.csv')
+            print("* Loading data from dataset {} into table {}".format(link[0], link[1]))
+            # for each dataset at url link[0] add data from it into table specified in link[1]
             eval('self.parse_' + link[1] + '(dataset)')
+
 
     def destroy_data(self):
         """
@@ -362,6 +419,8 @@ class Proj1:
 
 
 if __name__ == "__main__":
+    logging.basicConfig(filename='insert.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
+
     data_sources = [
         ("https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/osoby.csv", "infected"),
         ("https://onemocneni-aktualne.mzcr.cz/api/v2/covid-19/vyleceni.csv", "cured"),
@@ -374,5 +433,7 @@ if __name__ == "__main__":
 
     db = Proj1()
     db.create_db_structure()
-    db.load_data_into_db(data_sources)
-    db.destroy_data()
+    try:
+        db.load_data_into_db(data_sources)
+    except KeyboardInterrupt:
+        db.destroy_data()
