@@ -185,7 +185,7 @@ class Proj1:
         # remove rows where primary key element is not filled
         dataset = [row for row in dataset if row[1] != '' and row[2] != '' and row[3] != '']
         
-        for row in tqdm(dataset[1:1000]):  # first row is table header
+        for row in tqdm(dataset[1:]):  # first row is table header
             try:
                 self.__session.execute(
                     """
@@ -195,7 +195,7 @@ class Proj1:
                     (row[0], int(row[1]), row[2], row[3], row[4], row[6])
                 )
             except Exception:
-                print("* Row {} cannot be added into table \"infected\", see file \"insert.log\" for more information".format(row))
+                tqdm.write("* Row {} cannot be added into table \"infected\", see file \"insert.log\" for more information".format(row))
                 logging.exception("Exception raised while adding into table \"infected\"\n\trow: {}".format(row))
                 continue
 
@@ -211,7 +211,7 @@ class Proj1:
         # remove rows where primary key element is not filled
         dataset = [row for row in dataset if row[1] != '' and row[2] != '' and row[3] != '']
 
-        for row in tqdm(dataset[1:1000]):  # first row is table header
+        for row in tqdm(dataset[1:]):  # first row is table header
             try:
                 self.__session.execute(
                     """
@@ -221,7 +221,7 @@ class Proj1:
                     (row[0], int(row[1]), row[2], row[3], row[4])
                 )
             except Exception:
-                print("* Row {} cannot be added into table \"cured\", see file \"insert.log\" for more information".format(row))
+                tqdm.write("* Row {} cannot be added into table \"cured\", see file \"insert.log\" for more information".format(row))
                 logging.exception("Exception raised while adding into table \"cured\"\n\trow: {}".format(row))
                 continue
 
@@ -237,7 +237,7 @@ class Proj1:
         # remove rows where primary key element is not filled
         dataset = [row for row in dataset if row[1] != '' and row[2] != '' and row[3] != '']
 
-        for row in tqdm(dataset[1:1000]):  # first row is table header
+        for row in tqdm(dataset[1:]):  # first row is table header
             try:
                 self.__session.execute(
                     """
@@ -247,7 +247,7 @@ class Proj1:
                     (row[0], int(row[1]), row[2], row[3], row[4])
                 )
             except Exception:
-                print("* Row {} cannot be added into table \"died_covid\", see file \"insert.log\" for more information".format(row))
+                tqdm.write("* Row {} cannot be added into table \"died_covid\", see file \"insert.log\" for more information".format(row))
                 logging.exception("Exception raised while adding into table \"died_covid\"\n\trow: {}".format(row))
                 continue
 
@@ -263,7 +263,7 @@ class Proj1:
         # remove rows where primary key element is not filled
         dataset = [row for row in dataset if row[0] != '']
 
-        for row in tqdm(dataset[1:1000]):  # first row is table header
+        for row in tqdm(dataset[1:]):  # first row is table header
             try:
                 self.__session.execute(
                     """
@@ -284,7 +284,7 @@ class Proj1:
                      int(row[8]), int(row[9]))
                 )
             except Exception:
-                print("* Row {} cannot be added into table \"hospitalized\", see file \"insert.log\" for more information".format(row))
+                tqdm.write("* Row {} cannot be added into table \"hospitalized\", see file \"insert.log\" for more information".format(row))
                 logging.exception("Exception raised while adding into table \"hospitalized\"\n\trow: {}".format(row))
                 continue
 
@@ -300,7 +300,7 @@ class Proj1:
         # remove rows where primary key element is not filled
         dataset = [row for row in dataset if row[1] != '']
 
-        for row in tqdm(dataset[1:1000]):  # first row is table header
+        for row in tqdm(dataset[1:]):  # first row is table header
             try:
                 self.__session.execute(
                     """
@@ -317,7 +317,7 @@ class Proj1:
                     (row[0], row[1], row[2], int(row[3]), int(row[4]), int(row[5]), int(row[6]))
                 )
             except Exception:
-                print("* Row {} cannot be added into table \"tested\", see file \"insert.log\" for more information".format(row))
+                tqdm.write("* Row {} cannot be added into table \"tested\", see file \"insert.log\" for more information".format(row))
                 logging.exception("Exception raised while adding into table \"tested\"\n\trow: {}".format(row))
                 continue
 
@@ -333,7 +333,7 @@ class Proj1:
         # remove rows where primary key element is not filled
         dataset = [row for row in dataset if row[2] != '' and row[4] != '']
 
-        for row in tqdm(dataset[1:1000]):  # first row is table header
+        for row in tqdm(dataset[1:]):  # first row is table header
             try:
                 self.__session.execute(
                     """
@@ -350,7 +350,7 @@ class Proj1:
                     (row[0], row[1], row[2], row[4], int(row[5]), int(row[6]), int(row[7]))
                 )
             except Exception:
-                print("* Row {} cannot be added into table \"vaccinated\", see file \"insert.log\" for more information".format(row))
+                tqdm.write("* Row {} cannot be added into table \"vaccinated\", see file \"insert.log\" for more information".format(row))
                 logging.exception("Exception raised while adding into table \"vaccinated\"\n\trow: {}".format(row))
                 continue
 
@@ -366,8 +366,7 @@ class Proj1:
         # remove rows where primary key element is not filled
         dataset = [row for row in dataset if row[12] != '' and row[7] != '' and row[8] != '']
 
-        print("* Inserting into table 'died'")
-        for row in tqdm(dataset[1:1000]):  # first row is table header
+        for row in tqdm(dataset[1:]):  # first row is table header
             try:
                 if row[12] != "celkem":
                     self.__session.execute(
@@ -378,7 +377,7 @@ class Proj1:
                         (row[12], row[10], row[11], int(row[7]), int(row[8]), int(row[1]))
                     )
             except Exception:
-                print("* Row {} cannot be added into table \"died\", see file \"insert.log\" for more information".format(row))
+                tqdm.write("* Row {} cannot be added into table \"died\", see file \"insert.log\" for more information".format(row))
                 logging.exception("Exception raised while adding into table \"died\"\n\trow: {}".format(row))
                 continue
 
@@ -394,12 +393,17 @@ class Proj1:
         """
 
         dl = Downloader()
+ 
+        print("* Note that ^C stop adding data into any table and start adding into next table")
         for link in data_sources:
             # get dataset from given url link[0]
             dataset = dl.get_data(link[0], 'csv', link[1] + '_cache.csv')
             print("* Loading data from dataset {} into table {}".format(link[0], link[1]))
             # for each dataset at url link[0] add data from it into table specified in link[1]
-            eval('self.parse_' + link[1] + '(dataset)')
+            try:
+                eval('self.parse_' + link[1] + '(dataset)')
+            except KeyboardInterrupt:
+                print("* Adding into table {} stopped after keyboard interrupt".format(link[1]))
 
 
     def destroy_data(self):
