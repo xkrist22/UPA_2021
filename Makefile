@@ -9,8 +9,11 @@ REQUIREMENTS=requirements.txt
 
 .PHONY: run test
 
-run:
+run1:
 	${PYTHON} proj1.py
+
+run2:
+	${PYTHON} proj2.py
 
 test:
 	cd src & ${PYTEST}
