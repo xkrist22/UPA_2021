@@ -183,7 +183,7 @@ class Proj1:
         """
 
         # remove rows where primary key element is not filled
-        dataset = [row for row in dataset if row[1] != '' and row[2] != '' and row[3] != '']
+        dataset = [row for row in dataset if row[2] != '' and row[3] != '' and row[4] != '']
         
         for row in tqdm(dataset[1:]):  # first row is table header
             try:
@@ -192,7 +192,7 @@ class Proj1:
                     INSERT INTO infected (date, age, gender, region_code, district_code, foreign_infection_country)
                     VALUES (%s, %s, %s, %s, %s, %s)
                     """,
-                    (row[0], int(row[1]), row[2], row[3], row[4], row[6])
+                    (row[1], int(row[2]), row[3], row[4], row[5], row[7])
                 )
             except Exception:
                 tqdm.write("* Row {} cannot be added into table \"infected\", see file \"insert.log\" for more information".format(row))
@@ -209,7 +209,7 @@ class Proj1:
         """
 
         # remove rows where primary key element is not filled
-        dataset = [row for row in dataset if row[1] != '' and row[2] != '' and row[3] != '']
+        dataset = [row for row in dataset if row[2] != '' and row[3] != '' and row[4] != '']
 
         for row in tqdm(dataset[1:]):  # first row is table header
             try:
@@ -218,7 +218,7 @@ class Proj1:
                     INSERT INTO cured (date, age, gender, region_code, district_code)
                     VALUES (%s, %s, %s, %s, %s)
                     """,
-                    (row[0], int(row[1]), row[2], row[3], row[4])
+                    (row[1], int(row[2]), row[3], row[4], row[5])
                 )
             except Exception:
                 tqdm.write("* Row {} cannot be added into table \"cured\", see file \"insert.log\" for more information".format(row))
@@ -235,7 +235,7 @@ class Proj1:
         """
 
         # remove rows where primary key element is not filled
-        dataset = [row for row in dataset if row[1] != '' and row[2] != '' and row[3] != '']
+        dataset = [row for row in dataset if row[2] != '' and row[3] != '' and row[4] != '']
 
         for row in tqdm(dataset[1:]):  # first row is table header
             try:
@@ -244,7 +244,7 @@ class Proj1:
                     INSERT INTO died_covid (date, age, gender, region_code, district_code)
                     VALUES (%s, %s, %s, %s, %s)
                     """,
-                    (row[0], int(row[1]), row[2], row[3], row[4])
+                    (row[1], int(row[2]), row[3], row[4], row[5])
                 )
             except Exception:
                 tqdm.write("* Row {} cannot be added into table \"died_covid\", see file \"insert.log\" for more information".format(row))
@@ -261,7 +261,7 @@ class Proj1:
         """
 
         # remove rows where primary key element is not filled
-        dataset = [row for row in dataset if row[0] != '']
+        dataset = [row for row in dataset if row[1] != '']
 
         for row in tqdm(dataset[1:]):  # first row is table header
             try:
@@ -280,8 +280,8 @@ class Proj1:
                     oxygen_support
                         )  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     """,
-                    (row[0], int(row[1]), int(row[2]), int(row[3]), int(row[4]), int(row[5]), int(row[6]), int(row[7]),
-                     int(row[8]), int(row[9]))
+                    (row[1], int(row[2]), int(row[3]), int(row[4]), int(row[5]), int(row[6]), int(row[7]), int(row[8]),
+                     int(row[9]), int(row[10]))
                 )
             except Exception:
                 tqdm.write("* Row {} cannot be added into table \"hospitalized\", see file \"insert.log\" for more information".format(row))
@@ -298,7 +298,7 @@ class Proj1:
         """
 
         # remove rows where primary key element is not filled
-        dataset = [row for row in dataset if row[1] != '']
+        dataset = [row for row in dataset if row[2] != '']
 
         for row in tqdm(dataset[1:]):  # first row is table header
             try:
@@ -314,7 +314,7 @@ class Proj1:
                     cumulative_tested_region
                         )  VALUES (%s, %s, %s, %s, %s, %s, %s)
                     """,
-                    (row[0], row[1], row[2], int(row[3]), int(row[4]), int(row[5]), int(row[6]))
+                    (row[1], row[2], row[3], int(row[4]), int(row[5]), int(row[6]), int(row[7]))
                 )
             except Exception:
                 tqdm.write("* Row {} cannot be added into table \"tested\", see file \"insert.log\" for more information".format(row))
@@ -331,7 +331,7 @@ class Proj1:
         """
 
         # remove rows where primary key element is not filled
-        dataset = [row for row in dataset if row[2] != '' and row[4] != '']
+        dataset = [row for row in dataset if row[3] != '' and row[5] != '']
 
         for row in tqdm(dataset[1:]):  # first row is table header
             try:
@@ -347,7 +347,7 @@ class Proj1:
                         total_vaccine_num
                         )  VALUES (%s, %s, %s, %s, %s, %s, %s)
                     """,
-                    (row[0], row[1], row[2], row[4], int(row[5]), int(row[6]), int(row[7]))
+                    (row[1], row[2], row[3], row[5], int(row[6]), int(row[7]), int(row[8]))
                 )
             except Exception:
                 tqdm.write("* Row {} cannot be added into table \"vaccinated\", see file \"insert.log\" for more information".format(row))
