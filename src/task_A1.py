@@ -14,7 +14,7 @@ from tqdm import tqdm
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
-
+import json
 
 class Task_A1:
     def __init__(self, ip: str = "localhost", port: int = 9042, keyspace: str = "covid"):
@@ -130,15 +130,25 @@ class Task_A1:
         # create dataset first
         self.__create_csv()
 
-        plt.plot(self.__df.loc[self.__df["algorithm"] == "g", x_axe_var], self.__df.loc[self.__df["algorithm"] == "g", y_axe_var], label="greedy")
-        plt.plot(self.__df.loc[self.__df["algorithm"] == "e", x_axe_var], self.__df.loc[self.__df["algorithm"] == "e", y_axe_var], label="evolution")
-        plt.plot(self.__df.loc[self.__df["algorithm"] == "h", x_axe_var], self.__df.loc[self.__df["algorithm"] == "h", y_axe_var], label="heuristic")
-        plt.legend()
-        plt.xlabel(self.__labels[x_axe_var])
-        plt.ylabel(self.__labels[y_axe_var])
-        if title:
-            plt.title(title)
-        plt.savefig(output_filename)
+        fig, axs = plt.subplots(2, 2)
+        axs[0, 0].plot(self.__df["date"], self.__df["infected"])
+        axs[0, 0].set_title('Infected')
+        axs[0, 0].tick_params('x', labelrotation=-45)
+        axs[0, 1].plot(self.__df["date"], self.__df["infected"])
+        axs[0, 1].set_title('Cured')
+        axs[0, 1].tick_params('x', labelrotation=-45)
+        axs[1, 0].plot(self.__df["date"], self.__df["cured"])
+        axs[1, 0].set_title('Hospitalized')
+        axs[1, 0].tick_params('x', labelrotation=-45)
+        axs[1, 1].plot(self.__df["date"], self.__df["hospitalized"])
+        axs[1, 1].set_title('Tested')
+        axs[1, 1].tick_params('x', labelrotation=-45)
+
+        for ax in axs.flat:
+            ax.set(xlabel='', ylabel='Count')
+
+        fig.tight_layout()
+        plt.savefig(filename)
         plt.clf()
 
 
