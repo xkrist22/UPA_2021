@@ -7,10 +7,11 @@ __contact__ = "XLOGIN00@stud.fit.vutbr.cz"
 __date__ = "DD-MM-YYYY"
 
 from typing import *
+from matplotlib import pyplot as plt
 from cassandra.cluster import Cluster
 import logging
 from tqdm import tqdm
-
+import pandas as pd
 
 class Task_A2:
     def __init__(self, ip: str = "localhost", port: int = 9042, keyspace: str = "covid"):
@@ -33,18 +34,36 @@ class Task_A2:
         # create cassandra db handler
         self.__cluster = Cluster([ip], port=port)
         self.__session = self.__cluster.connect()
+        self.__session.execute("""
+            USE {};
+        """.format(keyspace))
 
 
     def __create_csv(self, filename: str = "A2.csv") -> None:
         """
-        Method creates csv dataset for first query of type A
+        Method creates csv dataset for second query of type A
         using data from cassandra db
 
         Args:
             filename (str): filename of csv dataset, defaultly "A2.csv"
         """
 
-        #TODO
+        # check if csv file already exists, in this case get data from file
+        try:
+            self.__df = pd.read_csv(filename)
+            return
+        except Exception:
+            pass
+
+        infected = self.__session.execute(
+            """
+            SELECT * FROM infected
+            """
+        )
+        df = pd.DataFrame(list(infected))
+        df = df.dropna()
+        self.__df = df.fillna(0)
+        self.__df.to_csv(filename, sep=",")
 
 
     def plot_graph(self, filename: str = "A2.png") -> None:
@@ -58,6 +77,10 @@ class Task_A2:
         """
 
         # create dataset first
-        self.__create_csv()
 
-        #TODO
+        self.__create_csv()
+        self.__df.boxplot(column=['age'], by="region_code", rot=-45)
+        plt.suptitle('')
+        plt.title("Age of infected people by region NUTS code")
+        plt.savefig(filename)
+        plt.clf()
